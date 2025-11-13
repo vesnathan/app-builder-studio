@@ -1,214 +1,222 @@
-# Lawn Order - Modern Lawn Care & Landscaping Platform
+# App Builder Studio
 
-A modern, full-stack lawn care and landscaping service platform built with Next.js 15, React 19, AWS AppSync, and AWS Serverless technologies.
+Visual application builder for creating web applications with drag-and-drop interface. Build full-stack applications without writing code.
 
-## Architecture
+## Features
 
-This project follows the same architecture pattern as The Story Hub (TSH) in the monorepo:
+- **Visual Editor**: Drag-and-drop interface for building UIs
+- **Component Library**: Pre-built components and templates
+- **Data Modeling**: Visual database schema designer
+- **API Builder**: Create GraphQL APIs visually
+- **Deployment**: One-click deployment to AWS
+- **Code Export**: Export generated code for customization
+- **Template Gallery**: Pre-built app templates
 
-### Frontend
+## Tech Stack
 
-- **Framework**: Next.js 15 with React 19 RC
-- **Styling**: Tailwind CSS with NextUI components
-- **State Management**: Zustand
-- **Data Fetching**: React Query (@tanstack/react-query)
-- **Authentication**: AWS Amplify with Cognito
-- **GraphQL Client**: AWS Amplify GraphQL
+**Frontend:**
+- Next.js 15 with React 19 RC
+- TypeScript
+- Tailwind CSS with NextUI components
+- AWS Amplify (GraphQL client)
+- Zustand (State management)
+- React Query (Data fetching)
 
-### Backend
+**Backend:**
+- AWS AppSync (GraphQL API)
+- DynamoDB (Application data & schemas)
+- AWS Cognito (Authentication)
+- AWS Lambda (Code generation & deployment)
+- S3 (Asset storage & deployments)
+- CloudFront (CDN)
 
-- **API**: AWS AppSync (GraphQL)
-- **Database**: Amazon DynamoDB
-- **Authentication**: Amazon Cognito
-- **Functions**: AWS Lambda
-- **Storage**: Amazon S3
-- **CDN**: Amazon CloudFront
+## Prerequisites
+
+- Node.js 18+
+- Yarn (package manager)
+- AWS Account with credentials
+- AWS CLI (installed locally via `./install-aws-cli-local.sh`)
+
+## Setup
+
+### 1. Install Dependencies
+
+```bash
+yarn install
+```
+
+### 2. Configure AWS Credentials
+
+Copy `.env.example` to `.env` and fill in your AWS credentials:
+
+```bash
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_REGION=ap-southeast-2
+AWS_ACCOUNT_ID=your_account_id
+```
+
+### 3. Install AWS CLI Locally
+
+```bash
+./install-aws-cli-local.sh
+```
+
+### 4. Load AWS Credentials
+
+```bash
+source ./set-aws-env.sh
+```
+
+## Development
+
+### Run Frontend Dev Server
+
+```bash
+yarn dev
+```
+
+### Type Checking
+
+```bash
+yarn tsc
+```
+
+### Linting
+
+```bash
+yarn lint
+```
+
+## Deployment
+
+### Deploy to Development
+
+```bash
+yarn deploy:dev
+```
+
+This will:
+1. Compile AppSync resolvers and Lambda functions
+2. Upload code to S3
+3. Deploy CloudFormation stacks
+4. Set up Cognito user pools
+5. Create DynamoDB tables
+6. Build and deploy frontend to CloudFront
+
+### Deploy to Production
+
+```bash
+yarn deploy:prod
+```
+
+### Update Deployment (Without Recreating Resources)
+
+```bash
+yarn deploy:dev:update
+```
 
 ## Project Structure
 
 ```
-lawn-order/
-├── frontend/               # Next.js 15 frontend application
+app-builder-studio/
+├── frontend/           # Next.js application
 │   ├── src/
-│   │   ├── app/           # Next.js App Router pages
-│   │   ├── components/    # React components
-│   │   ├── hooks/         # Custom React hooks
-│   │   ├── stores/        # Zustand stores
-│   │   ├── graphQL/       # GraphQL queries/mutations
-│   │   ├── config/        # Configuration files
-│   │   └── utils/         # Utility functions
-│   ├── package.json
-│   ├── next.config.js
-│   ├── tailwind.config.ts
-│   └── tsconfig.json
-│
-├── backend/               # Backend GraphQL schemas and resolvers
-│   ├── schema/           # GraphQL schema definitions
-│   │   ├── User.graphql
-│   │   ├── Service.graphql
-│   │   ├── Booking.graphql
-│   │   └── Quote.graphql
-│   ├── resolvers/        # AppSync resolvers (TypeScript)
-│   ├── lambda/           # Lambda functions
+│   │   ├── app/       # App router pages
+│   │   ├── components/
+│   │   │   ├── editor/      # Visual editor components
+│   │   │   ├── builder/     # Component builder
+│   │   │   └── preview/     # Live preview
+│   │   ├── hooks/     # Custom React hooks
+│   │   ├── stores/    # Zustand stores
+│   │   ├── lib/       # API clients & utilities
+│   │   └── types/     # TypeScript types
 │   └── package.json
-│
-├── infrastructure/       # AWS Infrastructure as Code
-│   └── cloudformation/  # CloudFormation templates
-│
-├── html/                # Original HTML template (reference)
-└── documentation/       # Project documentation
+├── backend/           # AppSync & Lambda code
+│   ├── schema/        # GraphQL schema files
+│   ├── resolvers/     # AppSync resolver functions
+│   ├── lambda/        # Lambda functions
+│   │   ├── codeGenerator/   # Code generation engine
+│   │   └── deployer/        # App deployment service
+│   └── package.json
+├── deploy/            # Deployment infrastructure
+│   ├── resources/     # CloudFormation templates
+│   └── utils/         # Deployment utilities
+└── documents/         # Project documentation
 ```
 
-## Features
+## Core Features
 
-### Core Features
+### Visual Editor
 
-- **Service Management**: Browse and manage lawn care services
-- **Quote Requests**: Customers can request quotes for services
-- **Booking System**: Schedule and manage service appointments
-- **User Authentication**: Secure login with AWS Cognito
-- **Admin Dashboard**: Manage services, bookings, and quotes
+The visual editor allows users to:
+- Drag and drop components onto canvas
+- Configure component properties
+- Set up data bindings
+- Define event handlers
+- Preview in real-time
 
-### Service Types
+### Data Modeling
 
-- Lawn Mowing
-- Lawn Maintenance
-- Landscaping Design
-- Garden Care
-- Tree Trimming
-- Hedge Trimming
-- Fertilization
-- Weed Control
-- Irrigation
-- Seasonal Cleanup
+Visual database designer for:
+- Creating tables and schemas
+- Defining relationships
+- Setting up indexes
+- Configuring access patterns
 
-## GraphQL Schema
+### API Builder
 
-### Types
+Create GraphQL APIs by:
+- Defining types visually
+- Creating queries and mutations
+- Setting up resolvers
+- Configuring authentication
 
-- **User**: Customer and admin profiles
-- **Service**: Available lawn care services
-- **Booking**: Service appointments
-- **Quote**: Quote requests and estimates
-- **Address**: Property addresses
+### Code Generation
 
-### Key Mutations
+The code generator produces:
+- React components
+- GraphQL schemas
+- AppSync resolvers
+- DynamoDB table definitions
+- CloudFormation templates
 
-- `requestQuote`: Submit a quote request
-- `createBooking`: Schedule a service appointment
-- `updateBookingStatus`: Update booking status
-- `createService`: Add new services (admin)
+### Deployment
 
-## Development
+One-click deployment:
+- Provisions AWS infrastructure
+- Deploys backend services
+- Builds and uploads frontend
+- Configures CDN and domain
 
-### Prerequisites
+## Database Structure
 
-- Node.js 20+
-- AWS Account
-- AWS CLI configured
+DynamoDB single-table design:
 
-### Getting Started
+- Projects: `PK: PROJECT#<projectId>`, `SK: METADATA`
+- Components: `PK: PROJECT#<projectId>`, `SK: COMPONENT#<componentId>`
+- Schemas: `PK: PROJECT#<projectId>`, `SK: SCHEMA#<schemaId>`
+- Deployments: `PK: PROJECT#<projectId>`, `SK: DEPLOYMENT#<timestamp>`
 
-1. **Install dependencies**
+## Related Projects
 
-   ```bash
-   npm install
-   ```
+See `CLAUDE.md` for cross-project references:
 
-2. **Configure environment**
+- **The Story Hub**: Reference for GraphQL patterns and AWS deployment
+- **CloudWatch Live**: Reference for event management
+- **Card Counting Trainer**: Reference for complex UI state management
+- **Lawn Order**: Reference for business application patterns
 
-   - Set up AWS credentials
-   - Configure deployment outputs in `packages/deploy`
+When implementing code generation features, check other projects for patterns to generate.
 
-3. **Run frontend locally**
+## Documentation
 
-   ```bash
-   cd frontend
-   npm run dev
-   ```
+See `documents/` folder for setup guides:
 
-   The app will run on http://localhost:3003
-
-4. **Deploy backend infrastructure**
-   ```bash
-   cd packages/deploy
-   npm run deploy:lawn-order
-   ```
-
-### Environment Variables
-
-The frontend uses these environment variables (auto-configured via `next.config.js`):
-
-- `NEXT_PUBLIC_USER_POOL_ID`: Cognito User Pool ID
-- `NEXT_PUBLIC_USER_POOL_CLIENT_ID`: Cognito App Client ID
-- `NEXT_PUBLIC_IDENTITY_POOL_ID`: Cognito Identity Pool ID
-- `NEXT_PUBLIC_GRAPHQL_URL`: AppSync GraphQL endpoint
-
-## Tech Stack
-
-### Frontend Dependencies
-
-- `next`: ^15.0.2
-- `react`: 19.0.0-rc
-- `tailwindcss`: ^3.4.14
-- `@nextui-org/react`: 2.4.6
-- `aws-amplify`: ^6.10.0
-- `@tanstack/react-query`: ^5.61.3
-- `zustand`: ^4.5.1
-- `zod`: ^3.23.8
-
-### Backend Dependencies
-
-- `@aws-appsync/utils`: ^1.10.1
-- `@aws-sdk/client-dynamodb`: 3.669.0
-- `@aws-sdk/lib-dynamodb`: 3.669.0
-- `@aws-sdk/client-cognito-identity-provider`: 3.669.0
-
-## Deployment
-
-The project uses AWS CloudFormation for infrastructure deployment:
-
-1. **Build frontend**
-
-   ```bash
-   cd frontend
-   npm run build
-   ```
-
-2. **Deploy infrastructure**
-
-   ```bash
-   cd packages/deploy
-   npm run deploy
-   ```
-
-3. **Upload frontend to S3/CloudFront**
-   - Automated via deployment scripts
-
-## Converting from HTML Template
-
-The original HTML template (in `html/` directory) has been converted to:
-
-- Modern React components with Tailwind CSS
-- Responsive Next.js pages
-- AWS serverless backend
-- GraphQL API
-
-### Original Pages
-
-- Home (index.html) → `/` (app/page.tsx)
-- Services → `/services`
-- About → `/about`
-- Contact → `/contact`
-- Gallery → `/gallery`
-- Blog → `/blog`
-- Team → `/team`
-- Pricing → `/pricing`
+- `DOMAIN_SETUP.md` - Custom domain configuration
+- `EMAIL_SETUP.md` - AWS SES email setup
+- `ARCHITECTURE_FIXES_NEEDED.md` - Known issues
 
 ## License
 
 MIT
-
-## Support
-
-For issues and questions, please open an issue in the repository.
