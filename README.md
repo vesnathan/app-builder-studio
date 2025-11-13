@@ -217,6 +217,10 @@ See `documents/` folder for setup guides:
 - `EMAIL_SETUP.md` - AWS SES email setup
 - `ARCHITECTURE_FIXES_NEEDED.md` - Known issues
 
+## Bug Reports
+
+Bug reports and issue submissions are welcome! Please open an issue on GitHub if you encounter any problems.
+
 ## License
 
-MIT
+Copyright © 2024. All rights reserved.
