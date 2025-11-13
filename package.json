@@ -1,0 +1,18 @@
+{
+  "name": "app-builder-studio",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "yarn workspace app-builder-studio-frontend dev:local",
+    "build": "yarn workspace app-builder-studio-frontend build",
+    "lint": "yarn workspace app-builder-studio-frontend lint",
+    "tsc": "yarn workspace app-builder-studio-frontend tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}
