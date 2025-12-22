@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Input, Textarea } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { HeroSlider } from "@/components/HeroSlider";
 import { AddressSection } from "@/components/AddressSection";
 import ParallaxGap from "@/components/layout/ParallaxGap";
@@ -64,7 +64,7 @@ function ContactForm() {
       };
 
       const response = await fetch(
-        "https://2pqtprxtj6zdhu7f52nitgp6ky0gwuvp.lambda-url.ap-southeast-2.on.aws/",
+        "https://r0nhsnxik1.execute-api.ap-southeast-2.amazonaws.com/contact",
         {
           method: "POST",
           headers: {
@@ -132,56 +132,57 @@ function ContactForm() {
                   </div>
                 )}
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <Input
-                    label="Name"
-                    name="name"
-                    placeholder="John Smith"
-                    required
-                    size="lg"
-                    classNames={{
-                      input: "font-roboto-slab",
-                      label: "font-roboto-slab",
-                    }}
-                  />
-
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <Input
-                      type="email"
-                      label="Email"
-                      name="email"
-                      placeholder="john@example.com"
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 font-roboto-slab">
+                      Name *
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="John Smith"
                       required
-                      size="lg"
-                      classNames={{
-                        input: "font-roboto-slab",
-                        label: "font-roboto-slab",
-                      }}
-                    />
-                    <Input
-                      type="tel"
-                      label="Phone"
-                      name="phone"
-                      placeholder="0400 123 456"
-                      size="lg"
-                      classNames={{
-                        input: "font-roboto-slab",
-                        label: "font-roboto-slab",
-                      }}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-brand-green font-roboto-slab"
                     />
                   </div>
 
-                  <Textarea
-                    label="Message"
-                    name="message"
-                    placeholder="Tell us how we can help you..."
-                    minRows={5}
-                    required
-                    size="lg"
-                    classNames={{
-                      input: "font-roboto-slab",
-                      label: "font-roboto-slab",
-                    }}
-                  />
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2 font-roboto-slab">
+                        Email *
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="john@example.com"
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-brand-green font-roboto-slab"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2 font-roboto-slab">
+                        Phone
+                      </label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        placeholder="0400 123 456"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-brand-green font-roboto-slab"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 font-roboto-slab">
+                      Message *
+                    </label>
+                    <textarea
+                      name="message"
+                      placeholder="Tell us how we can help you..."
+                      rows={5}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-brand-green font-roboto-slab resize-none"
+                    />
+                  </div>
 
                   <Button
                     type="submit"
@@ -259,18 +260,18 @@ function ContactForm() {
                 <div className="text-center">
                   <div className="w-16 h-16 bg-brand-green rounded-full flex items-center justify-center mx-auto mb-4">
                     <Icon
-                      icon="mdi:map-marker"
+                      icon="mdi:globe"
                       className="text-3xl text-white"
                     />
                   </div>
                   <h3 className="font-bold text-gray-800 mb-2 font-roboto-slab">
-                    Service Area
+                    Worldwide Service
                   </h3>
                   <p className="text-gray-600 font-roboto-slab text-sm">
-                    Serving businesses nationally
+                    Working with clients globally
                   </p>
                   <p className="text-brand-green font-semibold mt-2 font-roboto-slab">
-                    Remote & On-Site Available
+                    100% Remote
                   </p>
                 </div>
               </div>

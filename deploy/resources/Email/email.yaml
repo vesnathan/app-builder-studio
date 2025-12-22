@@ -1,0 +1,163 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Email receiving and forwarding infrastructure for App Builder Studio"
+
+Parameters:
+  Stage:
+    Type: String
+    Description: Deployment stage (e.g., dev, prod)
+    AllowedPattern: ^[a-zA-Z0-9-]+$
+  DomainName:
+    Type: String
+    Description: Domain name for email receiving
+  HostedZoneId:
+    Type: String
+    Description: Route53 Hosted Zone ID
+  ForwardToEmail:
+    Type: String
+    Description: Email address to forward incoming emails to
+    Default: ""
+  TemplateBucketName:
+    Type: String
+    Description: S3 bucket containing Lambda code
+
+Conditions:
+  IsProd: !Equals [!Ref Stage, "prod"]
+  HasForwardEmail: !Not [!Equals [!Ref ForwardToEmail, ""]]
+  CreateEmailResources: !And
+    - !Condition IsProd
+    - !Condition HasForwardEmail
+
+Resources:
+  # S3 Bucket policy to allow SES to write emails (bucket already exists)
+  EmailStorageBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Condition: CreateEmailResources
+    Properties:
+      Bucket: !Sub "${DomainName}-emails-${Stage}"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowSESPuts
+            Effect: Allow
+            Principal:
+              Service: ses.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Sub "arn:aws:s3:::${DomainName}-emails-${Stage}/*"
+            Condition:
+              StringEquals:
+                "AWS:SourceAccount": !Ref "AWS::AccountId"
+
+  # IAM Role for email forwarder Lambda
+  EmailForwarderRole:
+    Type: AWS::IAM::Role
+    Condition: CreateEmailResources
+    Properties:
+      RoleName: !Sub "appbuilderstudio-email-forwarder-role-${Stage}"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: EmailForwarderPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource: !Sub "arn:aws:s3:::${DomainName}-emails-${Stage}/*"
+              - Effect: Allow
+                Action:
+                  - ses:SendRawEmail
+                  - ses:SendEmail
+                Resource: "*"
+
+  # Lambda function to forward emails
+  EmailForwarderFunction:
+    Type: AWS::Lambda::Function
+    Condition: CreateEmailResources
+    Properties:
+      FunctionName: !Sub "appbuilderstudio-email-forwarder-${Stage}"
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 256
+      Role: !GetAtt EmailForwarderRole.Arn
+      Code:
+        S3Bucket: !Ref TemplateBucketName
+        S3Key: !Sub "lambdas/${Stage}/emailForwarder.zip"
+      Environment:
+        Variables:
+          EMAIL_BUCKET: !Sub "${DomainName}-emails-${Stage}"
+          FORWARD_TO: !Ref ForwardToEmail
+          FORWARD_FROM: !Sub "webmaster@${DomainName}"
+      Tags:
+        - Key: Project
+          Value: app-builder-studio
+        - Key: Stage
+          Value: !Ref Stage
+
+  # Permission for SES to invoke Lambda
+  EmailForwarderSESPermission:
+    Type: AWS::Lambda::Permission
+    Condition: CreateEmailResources
+    Properties:
+      FunctionName: !Ref EmailForwarderFunction
+      Action: lambda:InvokeFunction
+      Principal: ses.amazonaws.com
+      SourceAccount: !Ref "AWS::AccountId"
+
+  # SES Receipt Rule Set
+  EmailReceiptRuleSet:
+    Type: AWS::SES::ReceiptRuleSet
+    Condition: CreateEmailResources
+    Properties:
+      RuleSetName: !Sub "appbuilderstudio-rules-${Stage}"
+
+  # SES Receipt Rule for forwarding emails
+  EmailReceiptRule:
+    Type: AWS::SES::ReceiptRule
+    Condition: CreateEmailResources
+    DependsOn:
+      - EmailStorageBucketPolicy
+      - EmailForwarderSESPermission
+    Properties:
+      RuleSetName: !Ref EmailReceiptRuleSet
+      Rule:
+        Name: !Sub "forward-to-gmail-${Stage}"
+        Enabled: true
+        TlsPolicy: Optional
+        ScanEnabled: true
+        Recipients:
+          - !Sub "hello@${DomainName}"
+          - !Sub "webmaster@${DomainName}"
+          - !Sub "contact@${DomainName}"
+          - !Sub "info@${DomainName}"
+        Actions:
+          - S3Action:
+              BucketName: !Sub "${DomainName}-emails-${Stage}"
+              ObjectKeyPrefix: ""
+          - LambdaAction:
+              FunctionArn: !GetAtt EmailForwarderFunction.Arn
+              InvocationType: Event
+
+Outputs:
+  EmailBucketName:
+    Condition: CreateEmailResources
+    Description: S3 bucket for email storage
+    Value: !Sub "${DomainName}-emails-${Stage}"
+
+  EmailForwarderFunctionArn:
+    Condition: CreateEmailResources
+    Description: Email forwarder Lambda ARN
+    Value: !GetAtt EmailForwarderFunction.Arn
+
+  ReceiptRuleSetName:
+    Condition: CreateEmailResources
+    Description: SES Receipt Rule Set name (must be activated manually or via CLI)
+    Value: !Ref EmailReceiptRuleSet

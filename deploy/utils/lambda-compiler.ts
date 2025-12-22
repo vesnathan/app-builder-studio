@@ -16,6 +16,7 @@ export interface LambdaCompilerOptions {
   s3BucketName?: string;
   s3KeyPrefix?: string;
   stage?: string;
+  appName?: string;
   region?: string;
   debugMode?: boolean;
 }
@@ -34,6 +35,7 @@ export class LambdaCompiler {
   private s3BucketName?: string;
   private s3KeyPrefix: string;
   private stage: string;
+  private appName: string;
   private s3Client?: S3Client;
   private lambdaClient?: LambdaClient;
   private region?: string;
@@ -46,6 +48,7 @@ export class LambdaCompiler {
     this.s3BucketName = options.s3BucketName;
     this.s3KeyPrefix = options.s3KeyPrefix || "functions";
     this.stage = options.stage || "dev";
+    this.appName = options.appName || "appbuilderstudio";
     this.region = options.region;
     this.debugMode = options.debugMode || false;
 
@@ -285,6 +288,62 @@ ${jsCode}`;
   }
 
   /**
+   * Compile and upload a single Lambda function by name
+   */
+  async compileSingleLambda(functionName: string): Promise<void> {
+    this.logger.info(`Building single Lambda function: ${functionName}...`);
+
+    const sourceFile = path.join(this.baseLambdaDir, `${functionName}.ts`);
+    if (!(await fs.pathExists(sourceFile))) {
+      throw new Error(`Lambda source file not found: ${sourceFile}`);
+    }
+
+    // Ensure output directory exists
+    await fs.ensureDir(this.outputDir);
+
+    const lambdaFunc: LambdaFunction = {
+      sourceFile,
+      outputFile: path.join(this.outputDir, `${functionName}.js`),
+      zipFile: path.join(this.outputDir, `${functionName}.zip`),
+      functionName,
+    };
+
+    try {
+      await this.compileLambdaFunction(lambdaFunc);
+      await this.createZipFile(lambdaFunc);
+
+      // Upload to S3 if configured
+      if (this.s3Client && this.s3BucketName) {
+        const s3Key = path.posix.join(
+          this.s3KeyPrefix,
+          this.stage,
+          `${functionName}.zip`,
+        );
+
+        await this.uploadZipToS3(s3Key, lambdaFunc.zipFile);
+
+        if (this.debugMode) {
+          this.logger.debug(
+            `✓ Uploaded ${functionName} to S3: s3://${this.s3BucketName}/${s3Key}`,
+          );
+        }
+      }
+
+      this.logger.success(`✓ Lambda function ${functionName} compiled successfully`);
+    } catch (error: any) {
+      this.logger.error(`Failed to compile ${functionName}: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Convert camelCase to kebab-case
+   */
+  private toKebabCase(str: string): string {
+    return str.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+  }
+
+  /**
    * Force update Lambda function code from S3
    * This is necessary because CloudFormation doesn't update Lambda code when only S3 file content changes
    */
@@ -297,7 +356,11 @@ ${jsCode}`;
       return;
     }
 
-    const fullFunctionName = `nlmonorepo-thestoryhub-${functionName}-${this.stage}`;
+    // Convert camelCase filename to kebab-case to match CloudFormation naming
+    const kebabCaseName = this.toKebabCase(functionName);
+
+    // CloudFormation pattern: appbuilderstudio-${appName}-<function-name>-${Stage}
+    const fullFunctionName = `appbuilderstudio-${this.appName}-${kebabCaseName}-${this.stage}`;
 
     try {
       const command = new UpdateFunctionCodeCommand({

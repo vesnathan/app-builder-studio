@@ -25,7 +25,7 @@ export function HeroSlider() {
         loop
         className="h-[650px] bg-gray-900"
       >
-        {/* Slide 1 - Modern Office */}
+        {/* Slide 1 - Custom App Development */}
         <SwiperSlide>
           <div className="h-full w-full bg-[#1a1a1a] bg-cover bg-center bg-no-repeat relative">
             <div
@@ -45,13 +45,13 @@ export function HeroSlider() {
             <div className="relative z-10 h-full flex items-center justify-center">
               <div className="text-center px-4 max-w-4xl">
                 <h1 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4 font-josefin leading-tight">
-                  Transform Your
+                  We Build
                   <br className="hidden sm:block" />
-                  <span className="text-brand-yellow">Digital Presence</span>
+                  <span className="text-brand-yellow">Custom Apps</span>
                 </h1>
                 <p className="text-white text-base md:text-lg mb-6 md:mb-8 font-roboto-slab max-w-2xl mx-auto">
-                  Full-service digital agency specializing in web development,
-                  social media management, and strategic digital marketing.
+                  Web applications, mobile apps, and APIs built with modern
+                  technologies. From MVP to enterprise scale.
                 </p>
                 <div className="flex gap-4 justify-center">
                   <Link
@@ -66,7 +66,7 @@ export function HeroSlider() {
           </div>
         </SwiperSlide>
 
-        {/* Slide 2 - Developer Workspace */}
+        {/* Slide 2 - Web Applications */}
         <SwiperSlide>
           <div className="h-full w-full bg-[#1a1a1a] bg-cover bg-center bg-no-repeat relative">
             <div
@@ -86,13 +86,13 @@ export function HeroSlider() {
             <div className="relative z-10 h-full flex items-center justify-center">
               <div className="text-center px-4 max-w-4xl">
                 <h1 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4 font-josefin leading-tight">
-                  Custom Web Development
+                  React & Next.js
                   <br className="hidden sm:block" />
-                  <span className="text-brand-yellow">Built for Growth</span>
+                  <span className="text-brand-yellow">Experts</span>
                 </h1>
                 <p className="text-white text-base md:text-lg mb-6 md:mb-8 font-roboto-slab max-w-2xl mx-auto">
-                  Modern, responsive websites and applications built with
-                  cutting-edge technology for optimal performance.
+                  Modern, responsive web applications built with cutting-edge
+                  frameworks for speed, SEO, and scalability.
                 </p>
                 <div className="flex gap-4 justify-center">
                   <Link
@@ -107,7 +107,7 @@ export function HeroSlider() {
           </div>
         </SwiperSlide>
 
-        {/* Slide 3 - Social Media */}
+        {/* Slide 3 - Cloud & Infrastructure */}
         <SwiperSlide>
           <div className="h-full w-full bg-[#1a1a1a] bg-cover bg-center bg-no-repeat relative">
             <div
@@ -127,13 +127,13 @@ export function HeroSlider() {
             <div className="relative z-10 h-full flex items-center justify-center">
               <div className="text-center px-4 max-w-4xl">
                 <h1 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4 font-josefin leading-tight">
-                  Social Media That
+                  Cloud-Native
                   <br className="hidden sm:block" />
-                  <span className="text-brand-yellow">Drives Results</span>
+                  <span className="text-brand-yellow">Architecture</span>
                 </h1>
                 <p className="text-white text-base md:text-lg mb-6 md:mb-8 font-roboto-slab max-w-2xl mx-auto">
-                  Strategic content creation and management across all major
-                  platforms to grow your online presence.
+                  AWS infrastructure, serverless functions, and scalable
+                  backends that grow with your business.
                 </p>
                 <div className="flex gap-4 justify-center">
                   <Link

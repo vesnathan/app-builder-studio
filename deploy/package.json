@@ -1,13 +1,13 @@
 {
-  "name": "@the-story-hub/deploy",
+  "name": "@app-builder-studio/deploy",
   "version": "1.0.0",
-  "description": "The Story Hub Deployment Scripts",
+  "description": "App Builder Studio Deployment Scripts",
   "main": "deploy.ts",
   "license": "MIT",
   "scripts": {
     "deploy": "DOTENV_CONFIG_PATH=../.env ts-node -r dotenv/config deploy.ts",
     "deploy:dev": "DOTENV_CONFIG_PATH=../.env ts-node -r dotenv/config deploy.ts --stage dev",
-    "deploy:prod": "DOTENV_CONFIG_PATH=../.env ts-node -r dotenv/config deploy.ts --stage prod"
+    "deploy:prod": "DOTENV_CONFIG_PATH=../.env ts-node -r dotenv/config deploy.ts --stage prod --domain-name app-builder-studio.com --hosted-zone-id Z07329572WUIIPD8LHZQA"
   },
   "dependencies": {
     "@aws-sdk/client-appsync": "^3.821.0",
@@ -16,10 +16,16 @@
     "@aws-sdk/client-cloudwatch-logs": "^3.817.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.817.0",
     "@aws-sdk/client-dynamodb": "^3.817.0",
+    "@aws-sdk/client-lambda": "^3.817.0",
     "@aws-sdk/client-s3": "^3.300.0",
+    "@aws-sdk/client-ses": "^3.817.0",
+    "@aws-sdk/client-sts": "^3.817.0",
     "@aws-sdk/lib-dynamodb": "^3.817.0",
+    "@aws-sdk/types": "^3.817.0",
+    "@types/archiver": "^6.0.2",
     "@types/fs-extra": "^11.0.4",
     "@types/mime-types": "^2.1.4",
+    "archiver": "^7.0.1",
     "chalk": "^4.1.2",
     "commander": "^9.4.0",
     "dotenv": "^16.5.0",
