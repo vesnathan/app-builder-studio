@@ -10,39 +10,39 @@ export default function HomePage() {
   const services = [
     {
       icon: "mdi:web",
-      title: "Web Development",
+      title: "Web Applications",
       description:
-        "Custom websites and web applications built with modern technologies for optimal performance",
+        "Custom web apps built with React, Next.js, and modern frameworks for speed and scalability",
     },
     {
-      icon: "mdi:cellphone-link",
-      title: "Responsive Design",
+      icon: "mdi:cellphone",
+      title: "Mobile Apps",
       description:
-        "Mobile-first designs that look stunning on every device and screen size",
+        "Native and cross-platform mobile apps for iOS and Android that users love",
     },
     {
-      icon: "mdi:cart",
-      title: "E-Commerce Solutions",
+      icon: "mdi:rocket-launch",
+      title: "MVP Development",
       description:
-        "Complete online stores with payment integration and inventory management",
+        "Launch your startup fast with a minimum viable product built to validate and scale",
     },
     {
-      icon: "mdi:instagram",
-      title: "Social Media Management",
+      icon: "mdi:api",
+      title: "API Development",
       description:
-        "Strategic content creation and management across all major platforms",
+        "RESTful and GraphQL APIs that power your applications with reliability and performance",
     },
     {
-      icon: "mdi:google-ads",
-      title: "Digital Marketing",
+      icon: "mdi:cloud",
+      title: "Cloud Infrastructure",
       description:
-        "SEO, PPC, and content marketing to grow your online presence and drive results",
+        "AWS cloud architecture, serverless functions, and scalable deployment pipelines",
     },
     {
-      icon: "mdi:palette",
-      title: "Brand Identity",
+      icon: "mdi:database",
+      title: "Database Design",
       description:
-        "Logo design, brand guidelines, and visual assets that make your business stand out",
+        "Optimized database architecture for performance, security, and data integrity",
     },
   ];
 
@@ -63,8 +63,8 @@ export default function HomePage() {
               Our Services
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto mb-6 font-roboto-slab">
-              Comprehensive digital solutions to elevate your brand and grow
-              your business in the digital landscape.
+              End-to-end app development services to bring your ideas to life
+              with clean code and scalable architecture.
             </p>
             <div className="w-16 h-1 bg-brand-green mx-auto" />
           </div>
@@ -108,15 +108,14 @@ export default function HomePage() {
               </h2>
               <div className="w-16 h-1 bg-white mb-6 mx-auto" />
               <p className="mb-4 font-roboto-slab text-gray-200 leading-relaxed">
-                We're a full-service digital agency passionate about helping
-                businesses thrive in the online world. From stunning websites to
-                strategic social media campaigns, we craft digital experiences
-                that connect with your audience.
+                We're a custom app development company focused on building
+                software that solves real problems. From web apps to mobile
+                applications, we write clean, maintainable code that scales.
               </p>
               <p className="mb-8 font-roboto-slab text-gray-200 leading-relaxed">
-                With years of experience in web development, design, and digital
-                marketing, we understand what it takes to build a strong online
-                presence that drives real business results.
+                With deep expertise in React, Node.js, and cloud infrastructure,
+                we turn your ideas into production-ready applications that
+                perform under pressure.
               </p>
               <div className="grid grid-cols-2 gap-3 max-w-2xl mx-auto">
                 <div className="flex items-center gap-2 justify-center">
@@ -161,14 +160,14 @@ export default function HomePage() {
             viewBox="0 0 1200 120"
             preserveAspectRatio="none"
           >
-            <path d="M0,120 C300,20 900,20 1200,120 Z" fill="#98bc24" />
+            <path d="M0,120 C300,20 900,20 1200,120 Z" fill="#22C55E" />
           </svg>
         </div>
 
         <div className="py-20 bg-brand-green text-white">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-4xl font-bold mb-6 font-josefin">
-              Ready to Grow Your Digital Presence?
+              Ready to Build Your App?
             </h2>
             <p className="text-xl mb-4 font-roboto-slab">
               Let's build something amazing together
@@ -215,8 +214,8 @@ export default function HomePage() {
                 </h2>
                 <div className="w-16 h-1 bg-brand-green mb-6" />
                 <p className="text-gray-200 font-roboto-slab leading-relaxed">
-                  We're more than just a service provider - we're your digital
-                  growth partner. Here's what sets us apart.
+                  We're more than just developers - we're your technical
+                  partners. Here's what sets us apart.
                 </p>
               </div>
 

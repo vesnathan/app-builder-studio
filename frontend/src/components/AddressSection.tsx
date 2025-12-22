@@ -10,14 +10,14 @@ export function AddressSection() {
           {/* Service Area */}
           <div className="flex gap-4 items-start text-white justify-center md:justify-start">
             <div className="flex-shrink-0">
-              <Icon icon="mdi:map-marker" className="text-4xl text-white" />
+              <Icon icon="mdi:globe" className="text-4xl text-white" />
             </div>
             <div className="text-center md:text-left">
               <p className="font-semibold text-white leading-tight">
-                Nationwide Service
+                Worldwide Service
                 <br />
                 <span className="text-white/80 text-sm font-normal">
-                  Remote & On-Site Available
+                  Working with clients globally
                 </span>
               </p>
             </div>
@@ -43,16 +43,16 @@ export function AddressSection() {
           <div className="flex gap-4 items-start text-white justify-center md:justify-start">
             <div className="flex-shrink-0">
               <Icon
-                icon="mdi:lightbulb-on-outline"
+                icon="mdi:code-braces"
                 className="text-4xl text-white"
               />
             </div>
             <div className="text-center md:text-left">
               <p className="font-semibold text-white leading-tight">
-                Digital Solutions
+                Custom Development
                 <br />
                 <span className="text-white/80 text-sm font-normal">
-                  Web, Social Media & Marketing
+                  Web Apps, Mobile & APIs
                 </span>
               </p>
             </div>

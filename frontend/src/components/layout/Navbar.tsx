@@ -27,9 +27,9 @@ export function Navbar() {
             {/* Logo on the left */}
             <Link href="/" className="flex items-center">
               <img
-                src="/images/loudnclear-logo-small.png"
+                src="/images/logo.png"
                 alt="App Builder Studio"
-                className="h-12 w-auto object-contain"
+                className="h-24 w-auto object-contain"
               />
             </Link>
 

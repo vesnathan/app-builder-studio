@@ -4,13 +4,17 @@
   "private": true,
   "workspaces": [
     "frontend",
-    "backend"
+    "backend",
+    "deploy"
   ],
   "scripts": {
     "dev": "yarn workspace app-builder-studio-frontend dev:local",
     "build": "yarn workspace app-builder-studio-frontend build",
     "lint": "yarn workspace app-builder-studio-frontend lint",
-    "tsc": "yarn workspace app-builder-studio-frontend tsc --noEmit"
+    "tsc": "yarn workspace app-builder-studio-frontend tsc --noEmit",
+    "deploy": "yarn workspace @app-builder-studio/deploy deploy",
+    "deploy:dev": "yarn workspace @app-builder-studio/deploy deploy:dev",
+    "deploy:prod": "yarn workspace @app-builder-studio/deploy deploy:prod"
   },
   "devDependencies": {
     "typescript": "^5.5.4"

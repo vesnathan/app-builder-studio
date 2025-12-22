@@ -152,6 +152,7 @@ export class ForceDeleteManager {
     try {
       let KeyMarker: string | undefined;
       let VersionIdMarker: string | undefined;
+      let isTruncated = false;
       do {
         const listVersionsResponse = await this.s3Client.send(
           new ListObjectVersionsCommand({
@@ -202,7 +203,8 @@ export class ForceDeleteManager {
         }
         KeyMarker = listVersionsResponse.NextKeyMarker;
         VersionIdMarker = listVersionsResponse.NextVersionIdMarker;
-      } while (KeyMarker || VersionIdMarker);
+        isTruncated = listVersionsResponse.IsTruncated || false;
+      } while (isTruncated);
       logger.info(
         `Successfully emptied S3 bucket ${bucketName} (all versions and delete markers).`,
       );

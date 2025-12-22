@@ -1,14 +1,7 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
-import {
-  Button,
-  Input,
-  Textarea,
-  Select,
-  SelectItem,
-  Checkbox,
-} from "@nextui-org/react";
+import { Suspense, useState, useEffect, useRef } from "react";
+import { Button } from "@nextui-org/react";
 import { useSearchParams } from "next/navigation";
 import { HeroSlider } from "@/components/HeroSlider";
 import { AddressSection } from "@/components/AddressSection";
@@ -26,13 +19,12 @@ declare global {
 }
 
 const SERVICE_TYPES = [
-  { value: "WEB_DEVELOPMENT", label: "Web Development" },
-  { value: "ECOMMERCE", label: "E-Commerce Solutions" },
-  { value: "SOCIAL_MEDIA", label: "Social Media Management" },
-  { value: "DIGITAL_MARKETING", label: "Digital Marketing & SEO" },
-  { value: "BRANDING", label: "Brand Identity & Design" },
-  { value: "CONTENT_CREATION", label: "Content Creation" },
-  { value: "CONSULTING", label: "Digital Strategy Consulting" },
+  { value: "WEB_APP", label: "Web Application" },
+  { value: "MOBILE_APP", label: "Mobile App (iOS/Android)" },
+  { value: "MVP", label: "MVP / Prototype" },
+  { value: "API", label: "API Development" },
+  { value: "CLOUD", label: "Cloud Infrastructure" },
+  { value: "CONSULTING", label: "Technical Consulting" },
   { value: "OTHER", label: "Other - Please Describe" },
 ];
 
@@ -45,7 +37,14 @@ const BUSINESS_TYPES = [
   { value: "OTHER", label: "Other" },
 ];
 
-function ContactForm() {
+const TIMELINE_OPTIONS = [
+  { value: "ASAP", label: "ASAP" },
+  { value: "1_MONTH", label: "Within 1 Month" },
+  { value: "3_MONTHS", label: "Within 3 Months" },
+  { value: "FLEXIBLE", label: "Flexible Timeline" },
+];
+
+function QuoteForm() {
   const searchParams = useSearchParams();
   const preselectedService = searchParams.get("service");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,6 +52,7 @@ function ContactForm() {
     "idle" | "success" | "error"
   >("idle");
   const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
+  const formContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Load reCAPTCHA script
@@ -103,7 +103,7 @@ function ContactForm() {
       }
 
       const response = await fetch(
-        "https://2pqtprxtj6zdhu7f52nitgp6ky0gwuvp.lambda-url.ap-southeast-2.on.aws/",
+        "https://r0nhsnxik1.execute-api.ap-southeast-2.amazonaws.com/contact",
         {
           method: "POST",
           headers: {
@@ -116,18 +116,38 @@ function ContactForm() {
       if (response.ok) {
         setSubmitStatus("success");
         (e.target as HTMLFormElement).reset();
-        // Scroll to top to show success message
-        window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
         setSubmitStatus("error");
       }
+      // Scroll to form container to show success/error message with offset
+      setTimeout(() => {
+        if (formContainerRef.current) {
+          const yOffset = -100;
+          const y = formContainerRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }, 100);
     } catch (error) {
       console.error("Form submission error:", error);
       setSubmitStatus("error");
+      setTimeout(() => {
+        if (formContainerRef.current) {
+          const yOffset = -100;
+          const y = formContainerRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }, 100);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const inputClassName =
+    "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-brand-green font-roboto-slab";
+  const labelClassName =
+    "block text-sm font-medium text-gray-700 mb-2 font-roboto-slab";
+  const selectClassName =
+    "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:border-brand-green font-roboto-slab bg-white";
 
   return (
     <div className="min-h-screen">
@@ -152,26 +172,26 @@ function ContactForm() {
                 </h2>
                 <div className="w-16 h-1 bg-brand-green mb-6 mx-auto" />
                 <p className="text-xl text-white/90 font-roboto-slab mb-2">
-                  Custom digital solutions tailored to your business needs
+                  Custom app development tailored to your business needs
                 </p>
                 <p className="text-white/80 font-roboto-slab">
                   Serving businesses nationwide
                 </p>
               </div>
 
-              <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl p-8">
+              <div ref={formContainerRef} className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl p-8">
                 {submitStatus === "success" && (
                   <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg font-roboto-slab">
                     Thank you! Your quote request has been received. We'll get
                     back to you within 24 hours with a custom quote for your
-                    property.
+                    project.
                   </div>
                 )}
                 {submitStatus === "error" && (
                   <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg font-roboto-slab">
                     Sorry, there was an error submitting your quote request.
                     Please try again or email us directly at
-                    hello@appbuilderstudio.com
+                    hello@app-builder-studio.com
                   </div>
                 )}
 
@@ -192,55 +212,49 @@ function ContactForm() {
                       Your Details
                     </h3>
                     <div className="grid md:grid-cols-2 gap-4">
-                      <Input
-                        label="First Name"
-                        name="firstName"
-                        placeholder="John"
-                        required
-                        size="lg"
-                        classNames={{
-                          input: "font-roboto-slab",
-                          label: "font-roboto-slab",
-                        }}
-                      />
-                      <Input
-                        label="Last Name"
-                        name="lastName"
-                        placeholder="Smith"
-                        required
-                        size="lg"
-                        classNames={{
-                          input: "font-roboto-slab",
-                          label: "font-roboto-slab",
-                        }}
-                      />
+                      <div>
+                        <label className={labelClassName}>First Name *</label>
+                        <input
+                          type="text"
+                          name="firstName"
+                          placeholder="John"
+                          required
+                          className={inputClassName}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelClassName}>Last Name *</label>
+                        <input
+                          type="text"
+                          name="lastName"
+                          placeholder="Smith"
+                          required
+                          className={inputClassName}
+                        />
+                      </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4 mt-4">
-                      <Input
-                        type="email"
-                        label="Email"
-                        name="email"
-                        placeholder="john@example.com"
-                        required
-                        size="lg"
-                        classNames={{
-                          input: "font-roboto-slab",
-                          label: "font-roboto-slab",
-                        }}
-                      />
-                      <Input
-                        type="tel"
-                        label="Phone"
-                        name="phone"
-                        placeholder="0400 123 456"
-                        required
-                        size="lg"
-                        classNames={{
-                          input: "font-roboto-slab",
-                          label: "font-roboto-slab",
-                        }}
-                      />
+                      <div>
+                        <label className={labelClassName}>Email *</label>
+                        <input
+                          type="email"
+                          name="email"
+                          placeholder="john@example.com"
+                          required
+                          className={inputClassName}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelClassName}>Phone *</label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          placeholder="0400 123 456"
+                          required
+                          className={inputClassName}
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -249,34 +263,33 @@ function ContactForm() {
                     <h3 className="text-xl font-semibold text-brand-green mb-4 font-josefin">
                       Business Information
                     </h3>
-                    <Select
-                      label="What type of business do you have?"
-                      placeholder="Select business type"
-                      name="businessType"
-                      required
-                      size="lg"
-                      classNames={{
-                        label: "font-roboto-slab",
-                      }}
-                    >
-                      {BUSINESS_TYPES.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </Select>
+                    <div>
+                      <label className={labelClassName}>
+                        What type of business do you have? *
+                      </label>
+                      <select
+                        name="businessType"
+                        required
+                        className={selectClassName}
+                      >
+                        <option value="">Select business type</option>
+                        {BUSINESS_TYPES.map((type) => (
+                          <option key={type.value} value={type.value}>
+                            {type.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
                     <div className="mt-4">
-                      <Input
-                        label="Website (if you have one)"
+                      <label className={labelClassName}>
+                        Website (if you have one)
+                      </label>
+                      <input
+                        type="url"
                         name="currentWebsite"
                         placeholder="https://example.com"
-                        type="url"
-                        size="lg"
-                        classNames={{
-                          input: "font-roboto-slab",
-                          label: "font-roboto-slab",
-                        }}
+                        className={inputClassName}
                       />
                     </div>
                   </div>
@@ -286,25 +299,24 @@ function ContactForm() {
                     <h3 className="text-xl font-semibold text-brand-green mb-4 font-josefin">
                       Service Required
                     </h3>
-                    <Select
-                      label="What service do you need?"
-                      placeholder="Select a service"
-                      name="serviceType"
-                      defaultSelectedKeys={
-                        preselectedService ? [preselectedService] : []
-                      }
-                      required
-                      size="lg"
-                      classNames={{
-                        label: "font-roboto-slab",
-                      }}
-                    >
-                      {SERVICE_TYPES.map((service) => (
-                        <SelectItem key={service.value} value={service.value}>
-                          {service.label}
-                        </SelectItem>
-                      ))}
-                    </Select>
+                    <div>
+                      <label className={labelClassName}>
+                        What service do you need? *
+                      </label>
+                      <select
+                        name="serviceType"
+                        required
+                        defaultValue={preselectedService || ""}
+                        className={selectClassName}
+                      >
+                        <option value="">Select a service</option>
+                        {SERVICE_TYPES.map((service) => (
+                          <option key={service.value} value={service.value}>
+                            {service.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
 
                   {/* Company Details */}
@@ -312,52 +324,41 @@ function ContactForm() {
                     <h3 className="text-xl font-semibold text-brand-green mb-4 font-josefin">
                       Company Details
                     </h3>
-                    <Input
-                      label="Company Name"
-                      name="companyName"
-                      placeholder="Your Company Pty Ltd"
-                      required
-                      size="lg"
-                      className="mb-4"
-                      classNames={{
-                        input: "font-roboto-slab",
-                        label: "font-roboto-slab",
-                      }}
-                    />
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <Input
-                        label="Industry"
-                        name="industry"
-                        placeholder="e.g., Retail, Healthcare, etc."
-                        size="lg"
-                        classNames={{
-                          input: "font-roboto-slab",
-                          label: "font-roboto-slab",
-                        }}
-                      />
-                      <Select
-                        label="Timeline"
-                        placeholder="When do you need this?"
-                        name="timeline"
+                    <div>
+                      <label className={labelClassName}>Company Name *</label>
+                      <input
+                        type="text"
+                        name="companyName"
+                        placeholder="Your Company Pty Ltd"
                         required
-                        size="lg"
-                        classNames={{
-                          label: "font-roboto-slab",
-                        }}
-                      >
-                        <SelectItem key="ASAP" value="ASAP">
-                          ASAP
-                        </SelectItem>
-                        <SelectItem key="1_MONTH" value="1_MONTH">
-                          Within 1 Month
-                        </SelectItem>
-                        <SelectItem key="3_MONTHS" value="3_MONTHS">
-                          Within 3 Months
-                        </SelectItem>
-                        <SelectItem key="FLEXIBLE" value="FLEXIBLE">
-                          Flexible Timeline
-                        </SelectItem>
-                      </Select>
+                        className={inputClassName}
+                      />
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4 mt-4">
+                      <div>
+                        <label className={labelClassName}>Industry</label>
+                        <input
+                          type="text"
+                          name="industry"
+                          placeholder="e.g., Retail, Healthcare, etc."
+                          className={inputClassName}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelClassName}>Timeline *</label>
+                        <select
+                          name="timeline"
+                          required
+                          className={selectClassName}
+                        >
+                          <option value="">When do you need this?</option>
+                          {TIMELINE_OPTIONS.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                   </div>
 
@@ -366,22 +367,22 @@ function ContactForm() {
                     <h3 className="text-xl font-semibold text-brand-green mb-4 font-josefin">
                       Project Details
                     </h3>
-                    <Textarea
-                      label="Tell us about your project"
-                      name="description"
-                      placeholder="e.g., We need a new website for our online store with payment integration and inventory management. We currently have 100+ products..."
-                      minRows={5}
-                      required
-                      size="lg"
-                      classNames={{
-                        input: "font-roboto-slab",
-                        label: "font-roboto-slab",
-                      }}
-                    />
-                    <p className="text-sm text-gray-500 mt-2 font-roboto-slab">
-                      Please include: project goals, features needed, budget
-                      range, and any existing systems or platforms
-                    </p>
+                    <div>
+                      <label className={labelClassName}>
+                        Tell us about your project *
+                      </label>
+                      <textarea
+                        name="description"
+                        placeholder="e.g., We need a new website for our online store with payment integration and inventory management. We currently have 100+ products..."
+                        rows={5}
+                        required
+                        className={`${inputClassName} resize-none`}
+                      />
+                      <p className="text-sm text-gray-500 mt-2 font-roboto-slab">
+                        Please include: project goals, features needed, budget
+                        range, and any existing systems or platforms
+                      </p>
+                    </div>
                   </div>
 
                   {/* Submit Button */}
@@ -431,8 +432,8 @@ function ContactForm() {
                 </h2>
                 <div className="w-16 h-1 bg-brand-green mb-6" />
                 <p className="text-gray-600 font-roboto-slab leading-relaxed">
-                  We're a full-service digital agency dedicated to helping
-                  businesses thrive online through strategic digital solutions.
+                  We're a custom app development company dedicated to helping
+                  businesses succeed with scalable software solutions.
                 </p>
               </div>
 
@@ -440,33 +441,33 @@ function ContactForm() {
                 {[
                   {
                     icon: "✓",
-                    title: "Modern Technology Stack",
-                    desc: "We use cutting-edge technologies to build fast, secure, and scalable solutions",
+                    title: "Modern Tech Stack",
+                    desc: "React, Next.js, Node.js, AWS - we use proven technologies that scale",
                   },
                   {
                     icon: "✓",
-                    title: "Full-Service Agency",
-                    desc: "From web development to social media - we handle all your digital needs",
+                    title: "Custom Development",
+                    desc: "No templates or WordPress - every line of code is written for your project",
                   },
                   {
                     icon: "✓",
-                    title: "Nationwide Service",
-                    desc: "We work with businesses across Australia, providing remote and on-site support",
+                    title: "Startup Friendly",
+                    desc: "From MVP to scale - we help startups launch fast and iterate quickly",
                   },
                   {
                     icon: "✓",
-                    title: "Strategic Approach",
-                    desc: "Data-driven strategies tailored to your specific business goals",
+                    title: "Enterprise Ready",
+                    desc: "Scalable architecture designed to handle growth and high traffic",
                   },
                   {
                     icon: "✓",
                     title: "Ongoing Support",
-                    desc: "We don't disappear after launch - we're here to help your business grow",
+                    desc: "We don't disappear after launch - we're here to maintain and improve",
                   },
                   {
                     icon: "✓",
-                    title: "Transparent Pricing",
-                    desc: "Clear, upfront pricing with no hidden fees - just honest, quality work",
+                    title: "Transparent Process",
+                    desc: "Regular updates, clear communication, and no surprises on pricing",
                   },
                 ].map((item, index) => (
                   <div key={index} className="flex gap-3 items-start">
@@ -506,7 +507,7 @@ function ContactForm() {
   );
 }
 
-export default function ContactPage() {
+export default function QuotePage() {
   return (
     <Suspense
       fallback={
@@ -515,7 +516,7 @@ export default function ContactPage() {
         </div>
       }
     >
-      <ContactForm />
+      <QuoteForm />
     </Suspense>
   );
 }

@@ -13,7 +13,7 @@ export default function AboutPage() {
             About App Builder Studio
           </h1>
           <p className="text-xl text-white/90">
-            Your trusted partner in digital transformation and online growth
+            Custom app development for startups and growing businesses
           </p>
         </div>
       </section>
@@ -27,22 +27,19 @@ export default function AboutPage() {
           <div className="prose prose-lg max-w-none text-gray-700">
             <p className="mb-4">
               App Builder Studio was founded with a simple mission: to help
-              businesses thrive in the digital age through strategic, innovative
-              solutions that drive real results.
+              businesses build custom software that actually works. No templates,
+              no WordPress sites, no cookie-cutter solutions.
             </p>
             <p className="mb-4">
-              With years of experience in web development, digital marketing,
-              and social media management, our team brings expertise,
-              creativity, and dedication to every project. We understand that
-              your online presence is more than just a website – it's your
-              digital storefront, your brand voice, and a key driver of business
-              growth.
+              With deep expertise in React, Next.js, Node.js, and AWS cloud
+              infrastructure, our team builds web applications and mobile apps
+              that are fast, scalable, and maintainable. We write clean code
+              that your future developers will thank you for.
             </p>
             <p>
-              From building custom websites to managing comprehensive social
-              media campaigns, we're committed to exceeding expectations and
-              creating digital experiences that connect with your audience and
-              drive meaningful engagement.
+              From MVPs for early-stage startups to enterprise applications
+              handling millions of users, we're committed to delivering software
+              that solves real problems and drives business growth.
             </p>
           </div>
         </div>
@@ -60,24 +57,24 @@ export default function AboutPage() {
                 <span className="text-3xl">💻</span>
               </div>
               <h3 className="text-xl font-semibold text-brand-green mb-3 text-center">
-                Modern Technology
+                Modern Tech Stack
               </h3>
               <p className="text-gray-700 text-center">
-                We use cutting-edge technologies and frameworks to deliver fast,
-                secure, and scalable digital solutions
+                React, Next.js, Node.js, TypeScript, AWS - we use proven
+                technologies that scale with your business
               </p>
             </div>
 
             <div className="bg-white p-8 rounded-lg shadow-md">
               <div className="w-16 h-16 bg-brand-lime rounded-full flex items-center justify-center mb-4 mx-auto">
-                <span className="text-3xl">📊</span>
+                <span className="text-3xl">🚀</span>
               </div>
               <h3 className="text-xl font-semibold text-brand-green mb-3 text-center">
-                Data-Driven Strategy
+                Ship Fast
               </h3>
               <p className="text-gray-700 text-center">
-                Strategic approaches backed by analytics and insights to ensure
-                measurable results and ROI
+                We help startups launch MVPs quickly and iterate based on real
+                user feedback - not assumptions
               </p>
             </div>
 
@@ -86,11 +83,11 @@ export default function AboutPage() {
                 <span className="text-3xl">🤝</span>
               </div>
               <h3 className="text-xl font-semibold text-brand-green mb-3 text-center">
-                Partnership Approach
+                Long-term Partner
               </h3>
               <p className="text-gray-700 text-center">
-                We don't just deliver projects – we partner with you for
-                long-term success and ongoing support
+                We don't just deliver and disappear - we partner with you for
+                ongoing development, maintenance, and support
               </p>
             </div>
           </div>
@@ -101,10 +98,10 @@ export default function AboutPage() {
       <section className="py-16 bg-brand-green">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
-            Ready to Transform Your Digital Presence?
+            Ready to Build Your App?
           </h2>
           <p className="text-xl text-white/90 mb-8">
-            Contact us today for a free consultation and custom quote
+            Contact us today for a free consultation and project estimate
           </p>
           <Link href="/contact">
             <Button

@@ -1,13 +1,43 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 
 const ses = new SESClient({
   region: process.env.AWS_REGION || "ap-southeast-2",
 });
 
-// reCAPTCHA secret key - store in environment variable
-const RECAPTCHA_SECRET_KEY =
-  process.env.RECAPTCHA_SECRET_KEY ||
-  "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"; // Test key
+const ssm = new SSMClient({
+  region: process.env.AWS_REGION || "ap-southeast-2",
+});
+
+// Cache the secret key after first fetch
+let cachedRecaptchaSecretKey: string | null = null;
+
+async function getRecaptchaSecretKey(): Promise<string> {
+  if (cachedRecaptchaSecretKey) {
+    console.log("Using cached reCAPTCHA secret key");
+    return cachedRecaptchaSecretKey;
+  }
+
+  try {
+    console.log("Fetching reCAPTCHA secret from SSM...");
+    const command = new GetParameterCommand({
+      Name: "/app-builder-studio/recaptcha-secret-key",
+      WithDecryption: true,
+    });
+    const response = await ssm.send(command);
+    console.log("SSM response received, has value:", !!response.Parameter?.Value);
+    cachedRecaptchaSecretKey = response.Parameter?.Value || "";
+    if (!cachedRecaptchaSecretKey) {
+      console.warn("SSM returned empty value, using test key");
+      return "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe";
+    }
+    return cachedRecaptchaSecretKey;
+  } catch (error) {
+    console.error("Failed to fetch reCAPTCHA secret from SSM:", error);
+    // Fallback to test key if SSM fails
+    return "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe";
+  }
+}
 
 interface ContactFormData {
   name?: string;
@@ -36,6 +66,7 @@ async function verifyRecaptcha(token: string): Promise<boolean> {
   }
 
   try {
+    const secretKey = await getRecaptchaSecretKey();
     const response = await fetch(
       "https://www.google.com/recaptcha/api/siteverify",
       {
@@ -43,7 +74,7 @@ async function verifyRecaptcha(token: string): Promise<boolean> {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `secret=${RECAPTCHA_SECRET_KEY}&response=${token}`,
+        body: `secret=${secretKey}&response=${token}`,
       },
     );
 
@@ -57,8 +88,7 @@ async function verifyRecaptcha(token: string): Promise<boolean> {
     // Accept if score is above 0.5 (or if using test keys)
     return (
       data.success &&
-      ((data.score && data.score >= 0.5) ||
-        RECAPTCHA_SECRET_KEY.includes("Test"))
+      ((data.score && data.score >= 0.5) || secretKey.includes("Test"))
     );
   } catch (error) {
     console.error("reCAPTCHA verification error:", error);
@@ -145,11 +175,16 @@ ${body.message}
     }
 
     // Send email via SES
+    console.log("Sending email via SES...");
+    console.log("From:", process.env.FROM_EMAIL || "noreply@appbuilderstudio.com");
+    console.log("To:", process.env.TO_EMAIL || "hello@appbuilderstudio.com");
+
     const command = new SendEmailCommand({
       Source: process.env.FROM_EMAIL || "noreply@appbuilderstudio.com",
       Destination: {
         ToAddresses: [process.env.TO_EMAIL || "hello@appbuilderstudio.com"],
       },
+      ReplyToAddresses: body.email ? [body.email] : undefined,
       Message: {
         Subject: {
           Data: subject,
@@ -164,7 +199,8 @@ ${body.message}
       },
     });
 
-    await ses.send(command);
+    const result = await ses.send(command);
+    console.log("SES send result:", result.MessageId);
 
     return {
       statusCode: 200,

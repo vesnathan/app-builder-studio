@@ -10,15 +10,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <title>App Builder Studio - Web Development & Digital Solutions</title>
+        <title>App Builder Studio - Custom Web & Mobile App Development</title>
         <meta
           name="description"
-          content="Professional web development and digital solutions. We build modern, responsive websites and web applications tailored to your business needs."
+          content="We build custom web applications and mobile apps. From MVP to enterprise solutions, we turn your ideas into powerful, scalable software."
         />
         <link
           rel="icon"
-          href="/images/loudnclear-logo.webp"
-          type="image/webp"
+          href="/images/logo.png"
+          type="image/png"
         />
         <link
           href="https://fonts.googleapis.com/css?family=Josefin+Sans:100,100italic,300,300italic,400,400italic,600,600italic,700,700italic"

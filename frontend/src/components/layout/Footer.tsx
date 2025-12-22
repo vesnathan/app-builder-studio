@@ -13,12 +13,12 @@ export function Footer() {
             <div className="text-center md:text-left">
               <h3 className="text-xl font-bold mb-4 font-josefin">About Us</h3>
               <p className="text-gray-300 mb-4 font-roboto-slab text-sm">
-                Full-service digital agency specializing in web development,
-                social media management, and digital marketing solutions.
+                Custom app development company specializing in web applications,
+                mobile apps, and cloud infrastructure.
               </p>
               <p className="text-gray-300 text-sm font-roboto-slab">
-                We partner with businesses to create compelling digital
-                experiences that drive growth and engagement.
+                We build scalable software solutions that help businesses
+                launch, grow, and succeed.
               </p>
               <ul className="flex gap-3 mt-4 justify-center md:justify-start">
                 <li>
@@ -56,50 +56,50 @@ export function Footer() {
               <ul className="space-y-2 text-gray-300 text-sm font-roboto-slab">
                 <li>
                   <Link
-                    href="/quote?service=WEB_DEVELOPMENT"
+                    href="/quote?service=WEB_APP"
                     className="hover:text-brand-green transition-colors"
                   >
-                    Web Development
+                    Web Applications
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/quote?service=ECOMMERCE"
+                    href="/quote?service=MOBILE_APP"
                     className="hover:text-brand-green transition-colors"
                   >
-                    E-Commerce Solutions
+                    Mobile Apps
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/quote?service=SOCIAL_MEDIA"
+                    href="/quote?service=MVP"
                     className="hover:text-brand-green transition-colors"
                   >
-                    Social Media Management
+                    MVP Development
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/quote?service=DIGITAL_MARKETING"
+                    href="/quote?service=API"
                     className="hover:text-brand-green transition-colors"
                   >
-                    Digital Marketing
+                    API Development
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/quote?service=BRANDING"
+                    href="/quote?service=CLOUD"
                     className="hover:text-brand-green transition-colors"
                   >
-                    Brand Identity
+                    Cloud Infrastructure
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/quote?service=SEO"
+                    href="/quote?service=CONSULTING"
                     className="hover:text-brand-green transition-colors"
                   >
-                    SEO & Analytics
+                    Technical Consulting
                   </Link>
                 </li>
               </ul>
@@ -172,7 +172,7 @@ export function Footer() {
               reserved.
             </p>
             <p className="mt-2">
-              Web Development | Digital Marketing | Social Media Management
+              Web Apps | Mobile Apps | Cloud Infrastructure
             </p>
           </div>
         </div>
@@ -184,7 +184,7 @@ export function Footer() {
           style={{ bottom: "5px", right: "8px" }}
         >
           <Image
-            src="/images/loudnclear-logo.webp"
+            src="/images/logo.png"
             alt="App Builder Studio"
             width={360}
             height={90}
@@ -199,7 +199,7 @@ export function Footer() {
             className="inline-flex items-center hover:opacity-80 transition-opacity"
           >
             <Image
-              src="/images/loudnclear-logo.webp"
+              src="/images/logo.png"
               alt="App Builder Studio"
               width={360}
               height={90}
