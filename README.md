@@ -1,80 +1,76 @@
 # App Builder Studio
 
-Visual application builder for creating web applications with drag-and-drop interface. Build full-stack applications without writing code.
+Marketing website for App Builder Studio - a custom web and mobile app development service.
 
-## Features
+## Architecture
 
-- **Visual Editor**: Drag-and-drop interface for building UIs
-- **Component Library**: Pre-built components and templates
-- **Data Modeling**: Visual database schema designer
-- **API Builder**: Create GraphQL APIs visually
-- **Deployment**: One-click deployment to AWS
-- **Code Export**: Export generated code for customization
-- **Template Gallery**: Pre-built app templates
+This is a **marketing/landing page** with a simple serverless backend for form submissions.
 
-## Tech Stack
+### Frontend
 
-**Frontend:**
-- Next.js 15 with React 19 RC
-- TypeScript
-- Tailwind CSS with NextUI components
-- AWS Amplify (GraphQL client)
-- Zustand (State management)
-- React Query (Data fetching)
+- **Framework**: Next.js 15 with React 19 RC
+- **Styling**: Tailwind CSS with NextUI components
+- **Animations**: Framer Motion
+- **Icons**: Iconify React
+- **Carousel**: Swiper.js
 
-**Backend:**
-- AWS AppSync (GraphQL API)
-- DynamoDB (Application data & schemas)
-- AWS Cognito (Authentication)
-- AWS Lambda (Code generation & deployment)
-- S3 (Asset storage & deployments)
-- CloudFront (CDN)
+### Backend
 
-## Prerequisites
+- **Form Handling**: AWS Lambda (contact/quote form submissions)
+- **Email**: Amazon SES
+- **Hosting**: Amazon S3 + CloudFront
 
-- Node.js 18+
-- Yarn (package manager)
-- AWS Account with credentials
-- AWS CLI (installed locally via `./install-aws-cli-local.sh`)
+## Project Structure
 
-## Setup
-
-### 1. Install Dependencies
-
-```bash
-yarn install
+```
+app-builder-studio/
+├── frontend/               # Next.js frontend application
+│   ├── src/
+│   │   ├── app/           # Next.js App Router pages
+│   │   ├── components/    # React components
+│   │   └── config/        # Configuration files
+│   ├── package.json
+│   ├── next.config.js
+│   ├── tailwind.config.ts
+│   └── tsconfig.json
+│
+├── backend/               # Lambda functions
+│   └── lambda/           # Contact/quote form handler
+│
+├── deploy/               # Deployment scripts
+│   └── cfn-template.yaml # CloudFormation template
+│
+└── documents/            # Project documentation
 ```
 
-### 2. Configure AWS Credentials
+## Pages
 
-Copy `.env.example` to `.env` and fill in your AWS credentials:
-
-```bash
-AWS_ACCESS_KEY_ID=your_access_key
-AWS_SECRET_ACCESS_KEY=your_secret_key
-AWS_REGION=ap-southeast-2
-AWS_ACCOUNT_ID=your_account_id
-```
-
-### 3. Install AWS CLI Locally
-
-```bash
-./install-aws-cli-local.sh
-```
-
-### 4. Load AWS Credentials
-
-```bash
-source ./set-aws-env.sh
-```
+- **Home** (`/`) - Main landing page with services overview
+- **Contact** (`/contact`) - Contact form for inquiries
+- **Quote** (`/quote`) - Request a quote form
 
 ## Development
 
-### Run Frontend Dev Server
+### Prerequisites
 
-```bash
-yarn dev
-```
+- Node.js 18+
+- Yarn (package manager)
+
+### Getting Started
+
+1. **Install dependencies**
+
+   ```bash
+   yarn install
+   ```
+
+2. **Run frontend locally**
+
+   ```bash
+   yarn dev
+   ```
+
+   The app will run on http://localhost:3004
 
 ### Type Checking
 
@@ -88,7 +84,21 @@ yarn tsc
 yarn lint
 ```
 
+## Tech Stack
+
+### Frontend Dependencies
+
+- `next`: ^15.0.2
+- `react`: 19.0.0-rc
+- `tailwindcss`: ^3.4.14
+- `@nextui-org/react`: 2.4.6
+- `framer-motion`: ^11.0.0
+- `@iconify/react`: ^5.0.2
+- `swiper`: ^11.0.5
+
 ## Deployment
+
+The project uses AWS CloudFormation for infrastructure deployment.
 
 ### Deploy to Development
 
@@ -96,118 +106,11 @@ yarn lint
 yarn deploy:dev
 ```
 
-This will:
-1. Compile AppSync resolvers and Lambda functions
-2. Upload code to S3
-3. Deploy CloudFormation stacks
-4. Set up Cognito user pools
-5. Create DynamoDB tables
-6. Build and deploy frontend to CloudFront
-
 ### Deploy to Production
 
 ```bash
 yarn deploy:prod
 ```
-
-### Update Deployment (Without Recreating Resources)
-
-```bash
-yarn deploy:dev:update
-```
-
-## Project Structure
-
-```
-app-builder-studio/
-├── frontend/           # Next.js application
-│   ├── src/
-│   │   ├── app/       # App router pages
-│   │   ├── components/
-│   │   │   ├── editor/      # Visual editor components
-│   │   │   ├── builder/     # Component builder
-│   │   │   └── preview/     # Live preview
-│   │   ├── hooks/     # Custom React hooks
-│   │   ├── stores/    # Zustand stores
-│   │   ├── lib/       # API clients & utilities
-│   │   └── types/     # TypeScript types
-│   └── package.json
-├── backend/           # AppSync & Lambda code
-│   ├── schema/        # GraphQL schema files
-│   ├── resolvers/     # AppSync resolver functions
-│   ├── lambda/        # Lambda functions
-│   │   ├── codeGenerator/   # Code generation engine
-│   │   └── deployer/        # App deployment service
-│   └── package.json
-├── deploy/            # Deployment infrastructure
-│   ├── resources/     # CloudFormation templates
-│   └── utils/         # Deployment utilities
-└── documents/         # Project documentation
-```
-
-## Core Features
-
-### Visual Editor
-
-The visual editor allows users to:
-- Drag and drop components onto canvas
-- Configure component properties
-- Set up data bindings
-- Define event handlers
-- Preview in real-time
-
-### Data Modeling
-
-Visual database designer for:
-- Creating tables and schemas
-- Defining relationships
-- Setting up indexes
-- Configuring access patterns
-
-### API Builder
-
-Create GraphQL APIs by:
-- Defining types visually
-- Creating queries and mutations
-- Setting up resolvers
-- Configuring authentication
-
-### Code Generation
-
-The code generator produces:
-- React components
-- GraphQL schemas
-- AppSync resolvers
-- DynamoDB table definitions
-- CloudFormation templates
-
-### Deployment
-
-One-click deployment:
-- Provisions AWS infrastructure
-- Deploys backend services
-- Builds and uploads frontend
-- Configures CDN and domain
-
-## Database Structure
-
-DynamoDB single-table design:
-
-- Projects: `PK: PROJECT#<projectId>`, `SK: METADATA`
-- Components: `PK: PROJECT#<projectId>`, `SK: COMPONENT#<componentId>`
-- Schemas: `PK: PROJECT#<projectId>`, `SK: SCHEMA#<schemaId>`
-- Deployments: `PK: PROJECT#<projectId>`, `SK: DEPLOYMENT#<timestamp>`
-
-## Related Projects
-
-See `CLAUDE.md` for cross-project references:
-
-- **The Story Hub**: Reference for GraphQL patterns and AWS deployment
-- **CloudWatch Live**: Reference for event management
-- **Card Counting Trainer**: Reference for complex UI state management
-- **Lawn Order**: Reference for business application patterns
-
-When implementing code generation features, check other projects for patterns to generate.
 
 ## Documentation
 
@@ -215,12 +118,7 @@ See `documents/` folder for setup guides:
 
 - `DOMAIN_SETUP.md` - Custom domain configuration
 - `EMAIL_SETUP.md` - AWS SES email setup
-- `ARCHITECTURE_FIXES_NEEDED.md` - Known issues
-
-## Bug Reports
-
-Bug reports and issue submissions are welcome! Please open an issue on GitHub if you encounter any problems.
 
 ## License
 
-Copyright © 2024. All rights reserved.
+Copyright 2024. All rights reserved.
