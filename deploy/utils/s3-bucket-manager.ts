@@ -2,13 +2,27 @@ import {
   S3,
   HeadBucketCommand,
   CreateBucketCommand,
+  CreateBucketCommandInput,
   GetBucketLocationCommand,
   ListObjectsV2Command,
   PutBucketVersioningCommand,
   PutPublicAccessBlockCommand,
   BucketVersioningStatus,
+  BucketLocationConstraint,
 } from "@aws-sdk/client-s3";
 import { logger } from "./logger";
+
+// Helper to get error message from unknown error type
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
+// Helper to get error name from unknown error type
+function getErrorName(error: unknown): string | undefined {
+  if (error instanceof Error) return error.name;
+  return undefined;
+}
 
 export class S3BucketManager {
   private s3Client: S3;
@@ -56,11 +70,12 @@ export class S3BucketManager {
 
         // Bucket exists and is in the correct region
         return true;
-      } catch (error: any) {
-        if (error.name === "NotFound" || error.name === "NoSuchBucket") {
+      } catch (error: unknown) {
+        const errorName = getErrorName(error);
+        if (errorName === "NotFound" || errorName === "NoSuchBucket") {
           logger.info(`Bucket ${bucketName} does not exist, will create it`);
         } else {
-          logger.warning(`Error checking bucket existence: ${error.message}`);
+          logger.warning(`Error checking bucket existence: ${getErrorMessage(error)}`);
           // Continue to create the bucket anyway as it might be a permissions issue
         }
       }
@@ -69,7 +84,7 @@ export class S3BucketManager {
       logger.info(`Creating bucket ${bucketName} in region ${this.region}...`);
 
       try {
-        const createBucketParams: any = {
+        const createBucketParams: CreateBucketCommandInput = {
           Bucket: bucketName,
           ObjectOwnership: "BucketOwnerEnforced", // Enable S3 Object Ownership
         };
@@ -77,7 +92,7 @@ export class S3BucketManager {
         // Only specify LocationConstraint if not in us-east-1 (which is the default)
         if (this.region !== "us-east-1") {
           createBucketParams.CreateBucketConfiguration = {
-            LocationConstraint: this.region,
+            LocationConstraint: this.region as BucketLocationConstraint,
           };
         }
 
@@ -97,9 +112,10 @@ export class S3BucketManager {
           `Successfully created and configured bucket ${bucketName}`,
         );
         return true;
-      } catch (createError: any) {
+      } catch (createError: unknown) {
+        const errorName = getErrorName(createError);
         // Check if the bucket already exists but is owned by us (race condition)
-        if (createError.name === "BucketAlreadyOwnedByYou") {
+        if (errorName === "BucketAlreadyOwnedByYou") {
           logger.success(
             `Bucket ${bucketName} already exists and is owned by you`,
           );
@@ -107,7 +123,7 @@ export class S3BucketManager {
         }
 
         // Check if bucket already exists but is owned by someone else
-        if (createError.name === "BucketAlreadyExists") {
+        if (errorName === "BucketAlreadyExists") {
           logger.error(
             `Bucket ${bucketName} already exists but is owned by another account`,
           );
@@ -117,9 +133,9 @@ export class S3BucketManager {
         // Other error creating bucket
         throw createError;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error(
-        `Failed to ensure bucket ${bucketName} exists: ${error.message}`,
+        `Failed to ensure bucket ${bucketName} exists: ${getErrorMessage(error)}`,
       );
       return false;
     }
@@ -154,9 +170,9 @@ export class S3BucketManager {
         }),
       );
       logger.info(`Blocked public access on bucket ${bucketName}`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.warning(
-        `Failed to configure bucket ${bucketName}: ${error.message}`,
+        `Failed to configure bucket ${bucketName}: ${getErrorMessage(error)}`,
       );
       // Don't throw here as we've already created the bucket
     }
@@ -189,9 +205,9 @@ export class S3BucketManager {
         listObjectsResult.Contents?.length &&
         listObjectsResult.Contents[0].Key === key
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.warning(
-        `Error checking if object ${key} exists in bucket ${bucketName}: ${error.message}`,
+        `Error checking if object ${key} exists in bucket ${bucketName}: ${getErrorMessage(error)}`,
       );
       return false;
     }
@@ -219,9 +235,9 @@ export class S3BucketManager {
         Contents?: Array<{ Key: string }>;
       };
       return listObjectsResult.Contents?.length || 0;
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.warning(
-        `Error counting objects with prefix ${prefix} in bucket ${bucketName}: ${error.message}`,
+        `Error counting objects with prefix ${prefix} in bucket ${bucketName}: ${getErrorMessage(error)}`,
       );
       return 0;
     }

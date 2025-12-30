@@ -12,10 +12,24 @@ const RECAPTCHA_SITE_KEY =
   process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ||
   "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"; // Test key
 
+// Google reCAPTCHA type declaration
+interface Grecaptcha {
+  ready: (callback: () => void) => void;
+  execute: (siteKey: string, options: { action: string }) => Promise<string>;
+}
+
 declare global {
   interface Window {
-    grecaptcha: any;
+    grecaptcha: Grecaptcha;
   }
+}
+
+// Quote form data interface
+interface QuoteFormData {
+  formType: string;
+  recaptchaToken: string;
+  preselected_service?: string;
+  [key: string]: FormDataEntryValue | string | undefined;
 }
 
 const SERVICE_TYPES = [
@@ -88,7 +102,7 @@ function QuoteForm() {
       }
 
       // Build data object from form
-      const data: any = {
+      const data: QuoteFormData = {
         formType: "quote",
         recaptchaToken,
       };
