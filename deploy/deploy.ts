@@ -25,8 +25,9 @@ import {
 import { readFileSync } from "fs";
 import { getAwsCredentials } from "./utils/aws-credentials";
 import { S3BucketManager } from "./utils/s3-bucket-manager";
+import { AwsCredentialIdentity } from "@aws-sdk/types";
 
-const APP_NAME = "appbuilderstudio";
+const APP_NAME = "app-builder-studio";
 
 // ============================================================================
 // DNS STACK DEPLOYMENT (us-east-1 for CloudFront certificates)
@@ -36,7 +37,7 @@ async function deployDNSStack(
   domainName: string,
   hostedZoneId: string,
   stage: string,
-  credentials: any,
+  credentials: AwsCredentialIdentity,
   cloudFrontDomainName?: string
 ): Promise<string> {
   const stackName = `${APP_NAME}-dns-${stage}`;
@@ -98,8 +99,9 @@ async function deployDNSStack(
       new DescribeStacksCommand({ StackName: stackName })
     );
     stackExists = true;
-  } catch (e: any) {
-    if (!e.message.includes("does not exist")) {
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    if (!message.includes("does not exist")) {
       throw e;
     }
   }
@@ -117,8 +119,9 @@ async function deployDNSStack(
       );
       logger.info("Waiting for DNS stack update...");
       await waitForDNSStackComplete(cfnUsEast1, stackName, "UPDATE");
-    } catch (e: any) {
-      if (e.message.includes("No updates are to be performed")) {
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : String(e);
+      if (message.includes("No updates are to be performed")) {
         logger.info("DNS stack is already up to date");
       } else {
         throw e;
@@ -207,7 +210,7 @@ async function updateCloudFrontWithDomain(
   certificateArn: string,
   domainName: string,
   region: string,
-  credentials: any
+  credentials: AwsCredentialIdentity
 ): Promise<void> {
   const cfClient = new CloudFrontClient({ region, credentials });
 
@@ -284,8 +287,8 @@ export async function deployAppBuilderStudio(
   const credentials = await getAwsCredentials();
 
   // Get template bucket name
-  const templateBucketName = `nlmonorepo-appbuilderstudio-templates-${stage}`;
-  const stackName = `nlmonorepo-appbuilderstudio-${stage}`;
+  const templateBucketName = `app-builder-studio-templates-${stage}`;
+  const stackName = `app-builder-studio-${stage}`;
 
   const s3 = new S3Client({ region, credentials });
   const cloudformation = new CloudFormationClient({ region, credentials });
@@ -349,8 +352,9 @@ export async function deployAppBuilderStudio(
   try {
     await lambdaCompiler.compileLambdaFunctions();
     logger.success("✓ Lambda functions compiled and uploaded successfully");
-  } catch (error: any) {
-    logger.error(`Failed to compile Lambda functions: ${error.message}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error(`Failed to compile Lambda functions: ${message}`);
     throw error;
   }
 
@@ -409,8 +413,9 @@ export async function deployAppBuilderStudio(
         new DescribeStacksCommand({ StackName: stackName })
       );
       stackExists = true;
-    } catch (e: any) {
-      if (!e.message.includes("does not exist")) {
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : String(e);
+      if (!message.includes("does not exist")) {
         throw e;
       }
     }
@@ -471,8 +476,9 @@ export async function deployAppBuilderStudio(
         }
       }
     }
-  } catch (error: any) {
-    if (error.message.includes("No updates are to be performed")) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes("No updates are to be performed")) {
       logger.info("Stack is already up to date");
 
       // Still need to get outputs
@@ -491,7 +497,7 @@ export async function deployAppBuilderStudio(
         }
       }
     } else {
-      logger.error(`CloudFormation deployment failed: ${error.message}`);
+      logger.error(`CloudFormation deployment failed: ${errorMessage}`);
       throw error;
     }
   }
@@ -557,7 +563,7 @@ async function deployEmailStack(
   domainName: string,
   hostedZoneId: string,
   stage: string,
-  credentials: any,
+  credentials: AwsCredentialIdentity,
   templateBucketName: string
 ): Promise<void> {
   const stackName = `${APP_NAME}-email-${stage}`;
@@ -608,8 +614,9 @@ async function deployEmailStack(
     // Compile only the email forwarder
     await emailLambdaCompiler.compileSingleLambda("emailForwarder");
     logger.success("✓ Email forwarder Lambda compiled and uploaded");
-  } catch (error: any) {
-    logger.warning(`Email forwarder compilation: ${error.message}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.warning(`Email forwarder compilation: ${message}`);
   }
 
   // Upload Email template to S3
@@ -645,8 +652,9 @@ async function deployEmailStack(
       new DescribeStacksCommand({ StackName: stackName })
     );
     stackExists = true;
-  } catch (e: any) {
-    if (!e.message.includes("does not exist")) {
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    if (!message.includes("does not exist")) {
       throw e;
     }
   }
@@ -664,8 +672,9 @@ async function deployEmailStack(
       );
       logger.info("Waiting for Email stack update...");
       await waitForDNSStackComplete(cfnUsEast1, stackName, "UPDATE");
-    } catch (e: any) {
-      if (e.message.includes("No updates are to be performed")) {
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : String(e);
+      if (message.includes("No updates are to be performed")) {
         logger.info("Email stack is already up to date");
       } else {
         throw e;
@@ -716,8 +725,9 @@ async function deployEmailStack(
         RuleSetName: ruleSetName,
       }));
       logger.success("✓ SES receipt rule set activated");
-    } catch (e: any) {
-      logger.warning(`Could not activate rule set: ${e.message}`);
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : String(e);
+      logger.warning(`Could not activate rule set: ${message}`);
     }
   }
 

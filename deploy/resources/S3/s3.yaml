@@ -17,7 +17,7 @@ Resources:
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Properties:
-      BucketName: !Sub "nlmonorepo-${AppName}-website-${Stage}"
+      BucketName: !Sub "app-builder-studio-website-${Stage}"
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true

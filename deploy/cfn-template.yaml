@@ -66,28 +66,34 @@ Outputs:
     Description: "S3 bucket for static website"
     Value: !GetAtt S3Stack.Outputs.FrontendBucketName
     Export:
-      Name: !Sub "nlmonorepo-${AppName}-${Stage}-website-bucket"
+      Name: !Sub "app-builder-studio-${Stage}-website-bucket"
 
   CloudFrontDistributionId:
     Description: "CloudFront Distribution ID"
     Value: !GetAtt CloudFrontStack.Outputs.CloudFrontDistributionId
     Export:
-      Name: !Sub "nlmonorepo-${AppName}-${Stage}-cloudfront-id"
+      Name: !Sub "app-builder-studio-${Stage}-cloudfront-id"
 
   CloudFrontURL:
     Description: "CloudFront Distribution URL"
     Value: !GetAtt CloudFrontStack.Outputs.CloudFrontURL
     Export:
-      Name: !Sub "nlmonorepo-${AppName}-${Stage}-cloudfront-url"
+      Name: !Sub "app-builder-studio-${Stage}-cloudfront-url"
+
+  CloudFrontDomainName:
+    Description: "CloudFront Distribution Domain Name"
+    Value: !GetAtt CloudFrontStack.Outputs.CloudFrontDomainName
+    Export:
+      Name: !Sub "app-builder-studio-${Stage}-cloudfront-domain"
 
   WebsiteURL:
     Description: "Website URL (CloudFront or Custom Domain)"
     Value: !GetAtt CloudFrontStack.Outputs.CloudFrontURL
     Export:
-      Name: !Sub "nlmonorepo-${AppName}-${Stage}-website-url"
+      Name: !Sub "app-builder-studio-${Stage}-website-url"
 
   ContactFormFunctionUrl:
     Description: "Lambda Function URL for contact/quote forms"
     Value: !GetAtt LambdaStack.Outputs.SendContactEmailFunctionUrl
     Export:
-      Name: !Sub "nlmonorepo-${AppName}-${Stage}-contact-function-url"
+      Name: !Sub "app-builder-studio-${Stage}-contact-function-url"
