@@ -9,6 +9,18 @@ import {
 import archiver from "archiver";
 import { logger } from "./logger";
 
+// Helper to get error message from unknown error type
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
+// Helper to get error name from unknown error type
+function getErrorName(error: unknown): string | undefined {
+  if (error instanceof Error) return error.name;
+  return undefined;
+}
+
 export interface LambdaCompilerOptions {
   logger: typeof logger;
   baseLambdaDir: string;
@@ -107,13 +119,14 @@ export class LambdaCompiler {
             s3Key,
           );
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const errorMsg = getErrorMessage(error);
         this.logger.error(
-          `Failed to compile ${lambdaFunc.functionName}: ${error.message}`,
+          `Failed to compile ${lambdaFunc.functionName}: ${errorMsg}`,
         );
         failedFunctions.push({
           name: lambdaFunc.functionName,
-          error: error.message,
+          error: errorMsg,
         });
       }
     }
@@ -211,9 +224,9 @@ ${jsCode}`;
 
       // Return the code for S3 upload
       return output;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(
-        `Failed to compile ${lambdaFunc.functionName}: ${error.message}`,
+        `Failed to compile ${lambdaFunc.functionName}: ${getErrorMessage(error)}`,
       );
     }
   }
@@ -330,8 +343,8 @@ ${jsCode}`;
       }
 
       this.logger.success(`✓ Lambda function ${functionName} compiled successfully`);
-    } catch (error: any) {
-      this.logger.error(`Failed to compile ${functionName}: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to compile ${functionName}: ${getErrorMessage(error)}`);
       throw error;
     }
   }
@@ -376,9 +389,9 @@ ${jsCode}`;
           `✓ Force updated Lambda function: ${fullFunctionName}`,
         );
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Lambda might not exist yet (first deployment), so don't fail
-      if (error.name === "ResourceNotFoundException") {
+      if (getErrorName(error) === "ResourceNotFoundException") {
         if (this.debugMode) {
           this.logger.debug(
             `Lambda function ${fullFunctionName} does not exist yet (will be created by CloudFormation)`,
@@ -386,7 +399,7 @@ ${jsCode}`;
         }
       } else {
         this.logger.warning(
-          `Could not force update Lambda ${fullFunctionName}: ${error.message}`,
+          `Could not force update Lambda ${fullFunctionName}: ${getErrorMessage(error)}`,
         );
       }
     }

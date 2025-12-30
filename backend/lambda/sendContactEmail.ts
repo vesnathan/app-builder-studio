@@ -1,5 +1,6 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 
 const ses = new SESClient({
   region: process.env.AWS_REGION || "ap-southeast-2",
@@ -81,7 +82,7 @@ async function verifyRecaptcha(token: string): Promise<boolean> {
     const data = (await response.json()) as {
       success: boolean;
       score?: number;
-      [key: string]: any;
+      [key: string]: unknown;
     };
     console.log("reCAPTCHA verification result:", data);
 
@@ -96,7 +97,7 @@ async function verifyRecaptcha(token: string): Promise<boolean> {
   }
 }
 
-export const handler = async (event: any) => {
+export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> => {
   // Handle CORS preflight
   if (event.requestContext.http.method === "OPTIONS") {
     return {

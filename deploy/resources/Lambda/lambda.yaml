@@ -22,7 +22,7 @@ Resources:
   SendContactEmailFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "nlmonorepo-${AppName}-send-contact-email-${Stage}"
+      FunctionName: !Sub "app-builder-studio-send-contact-email-${Stage}"
       Handler: index.handler
       Runtime: nodejs20.x
       Timeout: 30
@@ -48,7 +48,7 @@ Resources:
   SendContactEmailRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub "nlmonorepo-${AppName}-send-contact-email-role-${Stage}"
+      RoleName: !Sub "app-builder-studio-send-contact-email-role-${Stage}"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
